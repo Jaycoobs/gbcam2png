@@ -18,29 +18,29 @@ static void writepng_error_handler(png_structp png_ptr, png_const_charp msg)
 	longjmp(jmpbuf, 1);
 }
 
-int gbphoto_gameface_writepng(const struct gb_ram_header *header, const char *filename)
+int gbphoto_gameface_writepng(const struct gb_ram_header *header, const char *filename, png_color* palette)
 {
 	struct gb_photo photo;
 
 	// Convert the large photo from the header to someting gbphoto_writepng accepts.
 	memcpy(photo.large, header->gameface, sizeof(header->gameface));
 
-	return gbphoto_writepng(&photo, filename, 0);
+	return gbphoto_writepng(&photo, filename, 0, palette);
 }
 
-int gbphoto_writepng(const struct gb_photo *photo, const char *filename, int small_photo)
+int gbphoto_writepng(const struct gb_photo *photo, const char *filename, int small_photo, png_color* palette)
 {
 	png_structp  png_ptr;
 	png_infop  info_ptr;
 	int color_type = PNG_COLOR_TYPE_PALETTE;
 	int w = small_photo ? 32 : 128;
 	int h = small_photo ? 32 : 112;
-	png_color palette[4] = {
+	/*png_color palette[4] = {
 		{ .red = 0xFF, .green = 0xFF, .blue = 0xFF },
 		{ .red = 0xAA, .green = 0xAA, .blue = 0xAA },
 		{ .red = 0x55, .green = 0x55, .blue = 0x55 },
 		{ .red = 0, .green = 0, .blue = 0 }
-	};
+	};*/
 	uint8_t rowdata[w];
 	int w_tiles = w / 8;
 	int h_tiles = h / 8;

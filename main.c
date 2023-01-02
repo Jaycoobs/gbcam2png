@@ -3,9 +3,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <png.h>
 
 #include "gbphoto.h"
 #include "pngwriter.h"
+
+static void parse_png_color(png_color* c, char* s) {
+    int i;
+    sscanf(s, "%x", &i);
+
+    c->red = (i >> 16) & 0xFF;
+    c->green = (i >> 8) & 0xFF;
+    c->blue = (i >> 0) & 0xFF;
+}
 
 static uint8_t *getTile(uint8_t *tiledata, int tile_id)
 {
@@ -109,7 +119,14 @@ int main(int argc, char **argv)
 	int arg_use_gameface = 0;
 	int i;
 
-	while ((res = getopt(argc, argv, "hi:o:b:dlavsg")) != -1) {
+	png_color palette[4] = {
+		{ .red = 0xFF, .green = 0xFF, .blue = 0xFF },
+		{ .red = 0xAA, .green = 0xAA, .blue = 0xAA },
+		{ .red = 0x55, .green = 0x55, .blue = 0x55 },
+		{ .red = 0, .green = 0, .blue = 0 }
+	};
+
+	while ((res = getopt(argc, argv, "hi:o:b:dlavsg0:1:2:3:")) != -1) {
 		switch (res)
 		{
 			case 'h':
@@ -142,6 +159,12 @@ int main(int argc, char **argv)
 			case 'g':
 				arg_use_gameface = 1;
 				break;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+                parse_png_color(&palette[4 - (res - '0')], optarg);
+                break;
 			default:
 				fprintf(stderr, "Unknown option. Try -h\n");
 				return 1;
@@ -216,7 +239,7 @@ int main(int argc, char **argv)
 						printf("Writing file %s\n", tmpfilename);
 					}
 
-					gbphoto_writepng(&photo, tmpfilename, arg_use_small_photos);
+					gbphoto_writepng(&photo, tmpfilename, arg_use_small_photos, palette);
 				} else {
 					if (arg_verbose) {
 						printf("Skipping deleted photo %d\n", i);
@@ -248,7 +271,7 @@ int main(int argc, char **argv)
 			outputPhotoToTerminal(&photo, arg_use_small_photos);
 		}
 		if (arg_output_filename) {
-			gbphoto_writepng(&photo, arg_output_filename, arg_use_small_photos);
+			gbphoto_writepng(&photo, arg_output_filename, arg_use_small_photos, palette);
 		}
 	}
 
