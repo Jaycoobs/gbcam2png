@@ -83,6 +83,11 @@ static void printHelp(void)
 	printf("  -a              Also export deleted photos\n");
 	printf("  -s              Export/display small photos (32x32) intead of large photos (128x112)\n");
 	printf("  -v              Be verbose\n");
+	printf("  -c palette      Set palette to 'grayscale' or 'original'\n");
+	printf("  -0 0xRRGGBB     Set custom palette color 0\n");
+	printf("  -1 0xRRGGBB     Set custom palette color 1\n");
+	printf("  -2 0xRRGGBB     Set custom palette color 2\n");
+	printf("  -3 0xRRGGBB     Set custom palette color 3\n");
 	printf("\n\n");
 	printf("Examples:\n");
 	printf("\n");
@@ -119,14 +124,25 @@ int main(int argc, char **argv)
 	int arg_use_gameface = 0;
 	int i;
 
-	png_color palette[4] = {
+	png_color grayscale[4] = {
 		{ .red = 0xFF, .green = 0xFF, .blue = 0xFF },
 		{ .red = 0xAA, .green = 0xAA, .blue = 0xAA },
 		{ .red = 0x55, .green = 0x55, .blue = 0x55 },
 		{ .red = 0, .green = 0, .blue = 0 }
 	};
 
-	while ((res = getopt(argc, argv, "hi:o:b:dlavsg0:1:2:3:")) != -1) {
+    png_color gbcolors[4] = {
+		{ .red = 0xE0, .green = 0xF8, .blue = 0xD0 },
+		{ .red = 0x88, .green = 0xC0, .blue = 0x70 },
+		{ .red = 0x34, .green = 0x68, .blue = 0x56 },
+		{ .red = 0x08, .green = 0x18, .blue = 0x20 }
+    };
+
+    png_color custom[4];
+
+    png_color* palette = grayscale;
+
+	while ((res = getopt(argc, argv, "hi:o:b:dlavsgc:0:1:2:3:")) != -1) {
 		switch (res)
 		{
 			case 'h':
@@ -163,7 +179,15 @@ int main(int argc, char **argv)
             case '1':
             case '2':
             case '3':
+                palette = custom;
                 parse_png_color(&palette[4 - (res - '0')], optarg);
+                break;
+            case 'c':
+                if (!strcmp(optarg, "original")) {
+                    palette = gbcolors;
+                } else if (!strcmp(optarg, "grayscale")) {
+                    palette = grayscale;
+                }
                 break;
 			default:
 				fprintf(stderr, "Unknown option. Try -h\n");
