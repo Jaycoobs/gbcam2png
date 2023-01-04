@@ -29,17 +29,22 @@ without using the command-line and without compiling anything.
 ### Help (-h)
 
 ```
- Options:
-	-h              Display this help text
-	-i index        Source image index (first image is 0). Default: 0
-	-g              Use gameface as source photo
-	-o output.png   Export a single photo to a .png file
-	-b basename     Export all photos to png files, using the specified basename
-	-d              Display selected photo (see -i) to the terminal
-	-l              List photos in save file
-	-a              Also export deleted photos
-	-s              Export/display small photos (32x32) intead of large photos (128x112)
-	-v              Be verbose
+Options:
+  -h              Display this help text
+  -i index        Source image index (first image is 0). Default: 0
+  -g              Use gameface as source photo
+  -o output.png   Export a single photo to a .png file
+  -b basename     Export all photos to png files, using the specified basename
+  -d              Display selected photo (see -i) to the terminal
+  -l              List photos in save file
+  -a              Also export deleted photos
+  -s              Export/display small photos (32x32) intead of large photos (128x112)
+  -v              Be verbose
+  -c palette      Set palette to 'grayscale' or 'original'
+  -0 0xRRGGBB     Set custom palette color 0
+  -1 0xRRGGBB     Set custom palette color 1
+  -2 0xRRGGBB     Set custom palette color 2
+  -3 0xRRGGBB     Set custom palette color 3
 ```
 
 ### Examples
